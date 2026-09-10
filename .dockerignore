@@ -1,0 +1,17 @@
+.git
+.github
+.vscode
+.idea
+**/__pycache__
+**/*.pyc
+**/.pytest_cache
+**/.venv
+**/venv
+infra
+deploy
+docs
+*.log
+.env
+.env.*
+*.tfstate
+*.tfstate.*

@@ -1,0 +1,51 @@
+# macOS
+.DS_Store
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+
+# Local environment variables
+.env
+.env.*
+!.env.example
+
+# Credentials and private keys
+*.pem
+*.key
+credentials
+kubeconfig
+*.kubeconfig
+
+# Terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+crash.*.log
+.terraformrc
+terraform.rc
+
+# Helm packages
+*.tgz
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+tmp/
+temp/
+
+# IDE
+.idea/
