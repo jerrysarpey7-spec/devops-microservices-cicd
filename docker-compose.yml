@@ -1,0 +1,74 @@
+name: devops-microservices
+
+services:
+  user-service:
+    image: devops-microservices/user-service:local
+    build:
+      context: ./services/user-service
+    ports:
+      - "8001:8001"
+    init: true
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - microservices-network
+
+  order-service:
+    image: devops-microservices/order-service:local
+    build:
+      context: ./services/order-service
+    ports:
+      - "8002:8002"
+    init: true
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - microservices-network
+
+  payment-service:
+    image: devops-microservices/payment-service:local
+    build:
+      context: ./services/payment-service
+    ports:
+      - "8003:8003"
+    init: true
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - microservices-network
+
+  notification-service:
+    image: devops-microservices/notification-service:local
+    build:
+      context: ./services/notification-service
+    ports:
+      - "8004:8004"
+    init: true
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - microservices-network
+
+networks:
+  microservices-network:
+    driver: bridge
