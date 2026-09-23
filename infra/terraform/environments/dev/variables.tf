@@ -79,3 +79,53 @@ variable "tags" {
     Owner      = "platform-engineering"
   }
 }
+
+variable "service_names" {
+  description = "Microservice names requiring private ECR repositories."
+  type        = set(string)
+
+  default = [
+    "user-service",
+    "order-service",
+    "payment-service",
+    "notification-service"
+  ]
+}
+
+variable "ecr_image_tag_mutability" {
+  description = "Image-tag mutability used by development ECR repositories."
+  type        = string
+  default     = "IMMUTABLE"
+}
+
+variable "ecr_scan_on_push" {
+  description = "Whether development images are scanned when pushed."
+  type        = bool
+  default     = true
+}
+
+variable "ecr_encryption_type" {
+  description = "Encryption type used by the development ECR repositories."
+  type        = string
+  default     = "KMS"
+
+  validation {
+    condition = contains(
+      ["AES256", "KMS"],
+      var.ecr_encryption_type
+    )
+    error_message = "ecr_encryption_type must be AES256 or KMS."
+  }
+}
+
+variable "ecr_untagged_image_retention_days" {
+  description = "Days before untagged development images expire."
+  type        = number
+  default     = 7
+}
+
+variable "ecr_maximum_image_count" {
+  description = "Maximum number of images retained in each development repository."
+  type        = number
+  default     = 30
+}

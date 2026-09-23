@@ -12,3 +12,16 @@ module "vpc" {
   enable_s3_gateway_endpoint = var.enable_s3_gateway_endpoint
   tags                       = var.tags
 }
+module "ecr" {
+  source = "../../modules/ecr"
+
+  project_name                  = var.project_name
+  environment                   = var.environment
+  repository_names              = var.service_names
+  image_tag_mutability          = var.ecr_image_tag_mutability
+  scan_on_push                  = var.ecr_scan_on_push
+  encryption_type               = var.ecr_encryption_type
+  untagged_image_retention_days = var.ecr_untagged_image_retention_days
+  maximum_image_count           = var.ecr_maximum_image_count
+  tags                          = var.tags
+}

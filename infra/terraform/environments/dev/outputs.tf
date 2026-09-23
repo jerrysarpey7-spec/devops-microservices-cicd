@@ -32,3 +32,18 @@ output "s3_gateway_endpoint_id" {
   description = "ID of the development S3 Gateway Endpoint."
   value       = module.vpc.s3_gateway_endpoint_id
 }
+
+output "ecr_repository_names" {
+  description = "ECR repository names keyed by service."
+  value       = module.ecr.repository_names
+}
+
+output "ecr_repository_arns" {
+  description = "ECR repository ARNs keyed by service."
+  value       = module.ecr.repository_arns
+}
+
+output "ecr_repository_urls" {
+  description = "ECR repository URLs keyed by service."
+  value       = module.ecr.repository_urls
+}
