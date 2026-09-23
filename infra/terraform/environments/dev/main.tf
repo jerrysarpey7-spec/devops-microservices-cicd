@@ -1,3 +1,4 @@
+
 module "vpc" {
   source = "../../modules/vpc"
 
@@ -24,4 +25,14 @@ module "ecr" {
   untagged_image_retention_days = var.ecr_untagged_image_retention_days
   maximum_image_count           = var.ecr_maximum_image_count
   tags                          = var.tags
+}
+
+module "iam" {
+  source = "../../modules/iam"
+
+  project_name             = var.project_name
+  environment              = var.environment
+  attach_vpc_cni_policy    = var.iam_attach_vpc_cni_policy
+  permissions_boundary_arn = var.iam_permissions_boundary_arn
+  tags                     = var.tags
 }

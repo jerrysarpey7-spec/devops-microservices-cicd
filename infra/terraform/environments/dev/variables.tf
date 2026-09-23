@@ -129,3 +129,27 @@ variable "ecr_maximum_image_count" {
   type        = number
   default     = 30
 }
+
+variable "iam_attach_vpc_cni_policy" {
+  description = "Whether the VPC CNI policy is temporarily attached to the EKS node role."
+  type        = bool
+  default     = true
+}
+
+variable "iam_permissions_boundary_arn" {
+  description = "Optional permissions-boundary ARN applied to development IAM roles."
+  type        = string
+  default     = null
+  nullable    = true
+
+  validation {
+    condition = (
+      var.iam_permissions_boundary_arn == null ||
+      can(regex(
+        "^arn:aws[a-z-]*:iam::[0-9]{12}:policy/",
+        var.iam_permissions_boundary_arn
+      ))
+    )
+    error_message = "iam_permissions_boundary_arn must be null or a valid IAM policy ARN."
+  }
+}
