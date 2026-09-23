@@ -47,3 +47,28 @@ output "ecr_repository_urls" {
   description = "ECR repository URLs keyed by service."
   value       = module.ecr.repository_urls
 }
+
+output "eks_cluster_role_name" {
+  description = "Name of the development EKS cluster IAM role."
+  value       = module.iam.eks_cluster_role_name
+}
+
+output "eks_cluster_role_arn" {
+  description = "ARN of the development EKS cluster IAM role."
+  value       = module.iam.eks_cluster_role_arn
+}
+
+output "eks_node_role_name" {
+  description = "Name of the development EKS worker-node IAM role."
+  value       = module.iam.eks_node_role_name
+}
+
+output "eks_node_role_arn" {
+  description = "ARN of the development EKS worker-node IAM role."
+  value       = module.iam.eks_node_role_arn
+}
+
+output "eks_node_instance_profile_name" {
+  description = "Name of the development EKS worker-node instance profile."
+  value       = module.iam.eks_node_instance_profile_name
+}

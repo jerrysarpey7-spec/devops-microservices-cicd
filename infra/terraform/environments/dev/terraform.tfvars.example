@@ -27,3 +27,7 @@ tags = {
   CostCenter = "portfolio"
   Owner      = "platform-engineering"
 }
+
+# EKS IAM configuration
+iam_attach_vpc_cni_policy    = true
+iam_permissions_boundary_arn = null
