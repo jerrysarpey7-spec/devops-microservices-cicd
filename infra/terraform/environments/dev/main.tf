@@ -36,3 +36,35 @@ module "iam" {
   permissions_boundary_arn = var.iam_permissions_boundary_arn
   tags                     = var.tags
 }
+
+module "eks" {
+  source = "../../modules/eks"
+
+  cluster_name       = var.eks_cluster_name
+  kubernetes_version = var.eks_kubernetes_version
+
+  private_subnet_ids = module.vpc.private_subnet_ids
+  cluster_role_arn   = module.iam.eks_cluster_role_arn
+  node_role_arn      = module.iam.eks_node_role_arn
+
+  endpoint_private_access = var.eks_endpoint_private_access
+  endpoint_public_access  = var.eks_endpoint_public_access
+  public_access_cidrs     = var.eks_public_access_cidrs
+
+  cloudwatch_log_retention_days = var.eks_cloudwatch_log_retention_days
+
+  node_group_name     = "general"
+  node_instance_types = var.eks_node_instance_types
+  node_capacity_type  = var.eks_node_capacity_type
+  node_min_size       = var.eks_node_min_size
+  node_desired_size   = var.eks_node_desired_size
+  node_max_size       = var.eks_node_max_size
+  node_disk_size      = var.eks_node_disk_size
+
+  node_labels = {
+    workload    = "general"
+    environment = var.environment
+  }
+
+  tags = var.tags
+}
