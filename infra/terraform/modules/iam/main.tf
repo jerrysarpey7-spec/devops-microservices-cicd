@@ -83,9 +83,9 @@ resource "aws_iam_role_policy_attachment" "eks_worker_node" {
   policy_arn = "arn:${data.aws_partition.current.partition}:iam::aws:policy/AmazonEKSWorkerNodePolicy"
 }
 
-resource "aws_iam_role_policy_attachment" "ecr_read_only" {
+resource "aws_iam_role_policy_attachment" "ecr_pull_only" {
   role       = aws_iam_role.eks_node.name
-  policy_arn = "arn:${data.aws_partition.current.partition}:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+  policy_arn = "arn:${data.aws_partition.current.partition}:iam::aws:policy/AmazonEC2ContainerRegistryPullOnly"
 }
 
 resource "aws_iam_role_policy_attachment" "vpc_cni" {

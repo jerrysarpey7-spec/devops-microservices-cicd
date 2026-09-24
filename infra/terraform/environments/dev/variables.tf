@@ -153,3 +153,83 @@ variable "iam_permissions_boundary_arn" {
     error_message = "iam_permissions_boundary_arn must be null or a valid IAM policy ARN."
   }
 }
+
+variable "eks_cluster_name" {
+  description = "Name of the development EKS cluster."
+  type        = string
+  default     = "devops-microservices-dev"
+}
+
+variable "eks_kubernetes_version" {
+  description = "Kubernetes version used by the development EKS cluster."
+  type        = string
+  default     = "1.36"
+}
+
+variable "eks_endpoint_private_access" {
+  description = "Whether the EKS API is reachable privately from the VPC."
+  type        = bool
+  default     = true
+}
+
+variable "eks_endpoint_public_access" {
+  description = "Whether the EKS API is reachable from approved public networks."
+  type        = bool
+  default     = true
+}
+
+variable "eks_public_access_cidrs" {
+  description = "Restricted public CIDRs permitted to access the EKS API."
+  type        = list(string)
+  default     = ["192.0.2.0/24"]
+
+  validation {
+    condition = (
+      length(var.eks_public_access_cidrs) > 0 &&
+      !contains(var.eks_public_access_cidrs, "0.0.0.0/0")
+    )
+    error_message = "eks_public_access_cidrs must contain restricted CIDRs and cannot include 0.0.0.0/0."
+  }
+}
+
+variable "eks_cloudwatch_log_retention_days" {
+  description = "Retention period for EKS control-plane logs."
+  type        = number
+  default     = 365
+}
+
+variable "eks_node_instance_types" {
+  description = "EC2 instance types used by the development node group."
+  type        = list(string)
+  default     = ["t3.small"]
+}
+
+variable "eks_node_capacity_type" {
+  description = "Capacity type used by the development node group."
+  type        = string
+  default     = "ON_DEMAND"
+}
+
+variable "eks_node_min_size" {
+  description = "Minimum number of development worker nodes."
+  type        = number
+  default     = 2
+}
+
+variable "eks_node_desired_size" {
+  description = "Desired number of development worker nodes."
+  type        = number
+  default     = 2
+}
+
+variable "eks_node_max_size" {
+  description = "Maximum number of development worker nodes."
+  type        = number
+  default     = 3
+}
+
+variable "eks_node_disk_size" {
+  description = "Root EBS volume size for development worker nodes."
+  type        = number
+  default     = 30
+}

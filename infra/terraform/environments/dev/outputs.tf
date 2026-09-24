@@ -72,3 +72,48 @@ output "eks_node_instance_profile_name" {
   description = "Name of the development EKS worker-node instance profile."
   value       = module.iam.eks_node_instance_profile_name
 }
+
+output "eks_cluster_name" {
+  description = "Name of the development EKS cluster."
+  value       = module.eks.cluster_name
+}
+
+output "eks_cluster_version" {
+  description = "Kubernetes version running on the development EKS cluster."
+  value       = module.eks.cluster_version
+}
+
+output "eks_cluster_endpoint" {
+  description = "Kubernetes API endpoint for the development EKS cluster."
+  value       = module.eks.cluster_endpoint
+}
+
+output "eks_node_group_name" {
+  description = "Name of the development EKS managed node group."
+  value       = module.eks.node_group_name
+}
+
+output "eks_node_group_status" {
+  description = "Status of the development EKS managed node group."
+  value       = module.eks.node_group_status
+}
+
+output "eks_oidc_issuer_url" {
+  description = "OIDC issuer URL for the development EKS cluster."
+  value       = module.eks.oidc_issuer_url
+}
+
+output "eks_oidc_provider_arn" {
+  description = "ARN of the development EKS IAM OIDC provider."
+  value       = module.eks.oidc_provider_arn
+}
+
+output "eks_kms_key_arn" {
+  description = "ARN of the KMS key protecting Kubernetes secrets."
+  value       = module.eks.kms_key_arn
+}
+
+output "eks_cloudwatch_log_group_name" {
+  description = "CloudWatch log group containing EKS control-plane logs."
+  value       = module.eks.cloudwatch_log_group_name
+}

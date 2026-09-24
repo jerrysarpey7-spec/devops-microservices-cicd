@@ -31,3 +31,17 @@ tags = {
 # EKS IAM configuration
 iam_attach_vpc_cni_policy    = true
 iam_permissions_boundary_arn = null
+
+# EKS configuration
+eks_cluster_name                  = "devops-microservices-dev"
+eks_kubernetes_version            = "1.36"
+eks_endpoint_private_access       = true
+eks_endpoint_public_access        = true
+eks_public_access_cidrs           = ["REPLACE_WITH_YOUR_PUBLIC_IP/32"]
+eks_cloudwatch_log_retention_days = 365
+eks_node_instance_types           = ["t3.small"]
+eks_node_capacity_type            = "ON_DEMAND"
+eks_node_min_size                 = 2
+eks_node_desired_size             = 2
+eks_node_max_size                 = 3
+eks_node_disk_size                = 30

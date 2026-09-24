@@ -18,6 +18,7 @@ locals {
 }
 
 resource "aws_vpc" "this" {
+  #checkov:skip=CKV2_AWS_11:VPC Flow Logs are deferred to the centralized monitoring phase; production environments must enable network-flow logging.
   cidr_block           = var.vpc_cidr
   enable_dns_support   = var.enable_dns_support
   enable_dns_hostnames = var.enable_dns_hostnames
