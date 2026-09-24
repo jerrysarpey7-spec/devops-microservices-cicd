@@ -1,0 +1,23 @@
+Notification Service has been deployed.
+
+Release:
+  {{ .Release.Name }}
+
+Namespace:
+  {{ .Release.Namespace }}
+
+Internal service:
+  {{ include "notification-service.fullname" . }}:{{ .Values.service.port }}
+
+Check the deployment:
+  kubectl get deployment {{ include "notification-service.fullname" . }} \
+    --namespace {{ .Release.Namespace }}
+
+Check the pods:
+  kubectl get pods \
+    --namespace {{ .Release.Namespace }} \
+    --selector app.kubernetes.io/instance={{ .Release.Name }}
+
+Run the Helm test:
+  helm test {{ .Release.Name }} \
+    --namespace {{ .Release.Namespace }}
