@@ -16,7 +16,7 @@ concurrency:
 jobs:
   python-quality:
     name: Python — ${{ matrix.service }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
 
     strategy:
@@ -56,7 +56,7 @@ jobs:
 
   container-build:
     name: Container — ${{ matrix.service }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
 
     strategy:
@@ -88,7 +88,7 @@ jobs:
 
   helm-quality:
     name: Helm validation
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
 
     steps:
@@ -139,7 +139,7 @@ jobs:
 
   terraform-quality:
     name: Terraform validation and security
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
 
     steps:
