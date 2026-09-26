@@ -1,0 +1,228 @@
+name: Build, Scan, Push, and Deploy
+
+on:
+  push:
+    branches:
+      - develop
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: development-deployment
+  cancel-in-progress: false
+
+jobs:
+  build-and-push:
+    name: Build — ${{ matrix.service }}
+    runs-on: ubuntu-latest
+    environment: development
+    timeout-minutes: 25
+
+    strategy:
+      fail-fast: false
+      matrix:
+        service:
+          - user-service
+          - order-service
+          - payment-service
+          - notification-service
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Create immutable image tag
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          image_tag="sha-${GITHUB_SHA::12}-${GITHUB_RUN_ID}"
+          echo "IMAGE_TAG=${image_tag}" >> "$GITHUB_ENV"
+          echo "Image tag: ${image_tag}"
+
+      - name: Configure short-lived AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+          role-session-name: github-actions-${{ matrix.service }}
+
+      - name: Log in to Amazon ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build image for security scanning
+        uses: docker/build-push-action@v6
+        with:
+          context: services/${{ matrix.service }}
+          file: services/${{ matrix.service }}/Dockerfile
+          platforms: linux/amd64
+          load: true
+          push: false
+          provenance: false
+          tags: >-
+            ${{ steps.ecr-login.outputs.registry }}/devops-microservices/dev/${{ matrix.service }}:${{ env.IMAGE_TAG }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Scan image with Trivy
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: >-
+            ${{ steps.ecr-login.outputs.registry }}/devops-microservices/dev/${{ matrix.service }}:${{ env.IMAGE_TAG }}
+          format: table
+          exit-code: "1"
+          ignore-unfixed: true
+          vuln-type: os,library
+          severity: HIGH,CRITICAL
+
+      - name: Push verified image
+        shell: bash
+        env:
+          ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
+          SERVICE: ${{ matrix.service }}
+        run: |
+          set -euo pipefail
+
+          image="${ECR_REGISTRY}/devops-microservices/dev/${SERVICE}:${IMAGE_TAG}"
+          docker push "$image"
+
+          echo "Pushed verified image:"
+          echo "$image"
+
+  deploy:
+    name: Deploy to development EKS
+    needs:
+      - build-and-push
+
+    runs-on:
+      - self-hosted
+      - macOS
+      - ARM64
+      - devops-microservices
+      - development
+
+    environment: development
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          clean: true
+
+      - name: Create deployment image tag
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          image_tag="sha-${GITHUB_SHA::12}-${GITHUB_RUN_ID}"
+          echo "IMAGE_TAG=${image_tag}" >> "$GITHUB_ENV"
+          echo "Deployment tag: ${image_tag}"
+
+      - name: Configure short-lived AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+          role-session-name: github-actions-eks-deploy
+
+      - name: Configure Kubernetes access
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          aws eks update-kubeconfig \
+            --region "${{ vars.AWS_REGION }}" \
+            --name "${{ vars.EKS_CLUSTER_NAME }}" \
+            --alias github-actions-development
+
+          kubectl cluster-info
+          kubectl get namespace "${{ vars.KUBERNETES_NAMESPACE }}"
+
+      - name: Deploy four Helm releases
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          account_id="$(aws sts get-caller-identity --query Account --output text)"
+          registry="${account_id}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com"
+
+          for service in \
+            user-service \
+            order-service \
+            payment-service \
+            notification-service
+          do
+            repository="${registry}/devops-microservices/dev/${service}"
+
+            echo "Deploying ${service}:${IMAGE_TAG}"
+
+            helm upgrade --install \
+              "$service" \
+              "deploy/helm/$service" \
+              --namespace "${{ vars.KUBERNETES_NAMESPACE }}" \
+              --set "image.repository=${repository}" \
+              --set-string "image.tag=${IMAGE_TAG}" \
+              --atomic \
+              --wait \
+              --timeout 10m \
+              --history-max 5
+          done
+
+      - name: Verify Kubernetes rollouts
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          for service in \
+            user-service \
+            order-service \
+            payment-service \
+            notification-service
+          do
+            kubectl rollout status \
+              "deployment/${service}" \
+              --namespace "${{ vars.KUBERNETES_NAMESPACE }}" \
+              --timeout 5m
+          done
+
+          kubectl get deployments,pods \
+            --namespace "${{ vars.KUBERNETES_NAMESPACE }}" \
+            -o wide
+
+      - name: Run Helm tests
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          for service in \
+            user-service \
+            order-service \
+            payment-service \
+            notification-service
+          do
+            helm test \
+              "$service" \
+              --namespace "${{ vars.KUBERNETES_NAMESPACE }}" \
+              --timeout 5m
+          done
+
+      - name: Publish deployment summary
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "## Development deployment"
+            echo
+            echo "- Commit: \`${GITHUB_SHA}\`"
+            echo "- Image tag: \`${IMAGE_TAG:-not-created}\`"
+            echo "- Cluster: \`${{ vars.EKS_CLUSTER_NAME }}\`"
+            echo "- Namespace: \`${{ vars.KUBERNETES_NAMESPACE }}\`"
+          } >> "$GITHUB_STEP_SUMMARY"

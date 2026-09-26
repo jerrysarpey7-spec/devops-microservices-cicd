@@ -117,3 +117,24 @@ output "eks_cloudwatch_log_group_name" {
   description = "CloudWatch log group containing EKS control-plane logs."
   value       = module.eks.cloudwatch_log_group_name
 }
+
+
+output "github_actions_role_name" {
+  description = "Name of the GitHub Actions deployment role."
+  value       = module.github_actions.role_name
+}
+
+output "github_actions_role_arn" {
+  description = "ARN assumed by GitHub Actions through OIDC."
+  value       = module.github_actions.role_arn
+}
+
+output "github_actions_oidc_provider_arn" {
+  description = "ARN of the GitHub Actions OIDC provider."
+  value       = module.github_actions.oidc_provider_arn
+}
+
+output "github_actions_allowed_subject" {
+  description = "GitHub OIDC subject permitted to assume the deployment role."
+  value       = module.github_actions.allowed_subject
+}

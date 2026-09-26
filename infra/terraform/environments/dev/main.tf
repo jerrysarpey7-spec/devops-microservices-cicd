@@ -68,3 +68,25 @@ module "eks" {
 
   tags = var.tags
 }
+
+
+
+module "github_actions" {
+  source = "../../modules/github-actions"
+
+  project_name      = var.project_name
+  environment       = var.environment
+  github_owner      = var.github_owner
+  github_repository = var.github_repository
+  allowed_branch    = var.github_deployment_branch
+  eks_cluster_name  = module.eks.cluster_name
+  kubernetes_namespace = (
+    var.kubernetes_application_namespace
+  )
+
+  github_oidc_provider_arn = var.github_oidc_provider_arn
+  ecr_repository_arns      = toset(values(module.ecr.repository_arns))
+  permissions_boundary_arn = var.iam_permissions_boundary_arn
+
+  tags = var.tags
+}

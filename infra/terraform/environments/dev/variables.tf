@@ -233,3 +233,34 @@ variable "eks_node_disk_size" {
   type        = number
   default     = 30
 }
+
+variable "github_owner" {
+  description = "GitHub account that owns the project repository."
+  type        = string
+  default     = "jerrysarpey7-spec"
+}
+
+variable "github_repository" {
+  description = "GitHub repository used by the CI/CD workflow."
+  type        = string
+  default     = "devops-microservices-cicd"
+}
+
+variable "github_deployment_branch" {
+  description = "Git branch allowed to assume the AWS deployment role."
+  type        = string
+  default     = "develop"
+}
+
+variable "github_oidc_provider_arn" {
+  description = "Existing GitHub Actions OIDC provider ARN, or null to create one."
+  type        = string
+  default     = null
+  nullable    = true
+}
+
+variable "kubernetes_application_namespace" {
+  description = "Kubernetes namespace administered by the CI/CD workflow."
+  type        = string
+  default     = "devops-microservices"
+}
