@@ -18,7 +18,6 @@ jobs:
   build-and-push:
     name: Build — ${{ matrix.service }}
     runs-on: ubuntu-24.04
-    environment: development
     timeout-minutes: 25
 
     strategy:
@@ -108,7 +107,6 @@ jobs:
       - devops-microservices
       - development
 
-    environment: development
     timeout-minutes: 30
 
     steps:
