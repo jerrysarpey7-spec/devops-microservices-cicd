@@ -19,6 +19,9 @@ jobs:
     name: Build — ${{ matrix.service }}
     runs-on: ubuntu-24.04
     timeout-minutes: 25
+    permissions:
+      contents: read
+      id-token: write
 
     strategy:
       fail-fast: false
@@ -99,6 +102,9 @@ jobs:
     name: Deploy to development EKS
     needs:
       - build-and-push
+    permissions:
+      contents: read
+      id-token: write
 
     runs-on:
       - self-hosted
