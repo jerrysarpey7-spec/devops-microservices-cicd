@@ -51,7 +51,6 @@ variable "github_repository" {
 variable "github_repository_id" {
   description = "Stable numeric GitHub repository ID."
   type        = string
-  default     = "1366902343"
 
   validation {
     condition     = can(regex("^[0-9]+$", var.github_repository_id))
