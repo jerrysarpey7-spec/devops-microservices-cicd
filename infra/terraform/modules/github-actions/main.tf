@@ -8,12 +8,18 @@ locals {
   role_name = "${var.project_name}-${var.environment}-github-actions"
 
   github_subject = join(
-    ":",
+    "",
     [
-      "repo",
-      "${var.github_owner}/${var.github_repository}",
-      "ref",
-      "refs/heads/${var.allowed_branch}"
+      "repo:",
+      var.github_owner,
+      "@",
+      var.github_owner_id,
+      "/",
+      var.github_repository,
+      "@",
+      var.github_repository_id,
+      ":ref:refs/heads/",
+      var.allowed_branch
     ]
   )
 
@@ -166,6 +172,7 @@ resource "aws_iam_role_policy_attachment" "github_actions" {
   role       = aws_iam_role.github_actions.name
   policy_arn = aws_iam_policy.github_actions.arn
 }
+
 
 resource "aws_eks_access_entry" "github_actions" {
   cluster_name  = var.eks_cluster_name

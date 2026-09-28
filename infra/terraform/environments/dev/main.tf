@@ -1,4 +1,3 @@
-
 module "vpc" {
   source = "../../modules/vpc"
 
@@ -13,6 +12,7 @@ module "vpc" {
   enable_s3_gateway_endpoint = var.enable_s3_gateway_endpoint
   tags                       = var.tags
 }
+
 module "ecr" {
   source = "../../modules/ecr"
 
@@ -69,17 +69,18 @@ module "eks" {
   tags = var.tags
 }
 
-
-
 module "github_actions" {
   source = "../../modules/github-actions"
 
-  project_name      = var.project_name
-  environment       = var.environment
-  github_owner      = var.github_owner
-  github_repository = var.github_repository
-  allowed_branch    = var.github_deployment_branch
-  eks_cluster_name  = module.eks.cluster_name
+  project_name         = var.project_name
+  environment          = var.environment
+  github_owner         = var.github_owner
+  github_owner_id      = var.github_owner_id
+  github_repository    = var.github_repository
+  github_repository_id = var.github_repository_id
+  allowed_branch       = var.github_deployment_branch
+  eks_cluster_name     = module.eks.cluster_name
+
   kubernetes_namespace = (
     var.kubernetes_application_namespace
   )
