@@ -1,0 +1,14 @@
+apiVersion: v2
+name: payment-service
+description: Secure Helm chart for the Payment Service FastAPI microservice
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+
+keywords:
+  - fastapi
+  - microservice
+  - payment-service
+
+maintainers:
+  - name: Platform Engineering

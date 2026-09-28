@@ -1,0 +1,14 @@
+apiVersion: v2
+name: order-service
+description: Secure Helm chart for the Order Service FastAPI microservice
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+
+keywords:
+  - fastapi
+  - microservice
+  - order-service
+
+maintainers:
+  - name: Platform Engineering

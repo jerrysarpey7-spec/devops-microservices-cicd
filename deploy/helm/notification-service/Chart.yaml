@@ -1,0 +1,14 @@
+apiVersion: v2
+name: notification-service
+description: Secure Helm chart for the Notification Service FastAPI microservice
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+
+keywords:
+  - fastapi
+  - microservice
+  - notification-service
+
+maintainers:
+  - name: Platform Engineering
