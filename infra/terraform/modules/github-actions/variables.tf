@@ -28,6 +28,16 @@ variable "github_owner" {
   }
 }
 
+variable "github_owner_id" {
+  description = "Stable numeric GitHub ID of the repository owner."
+  type        = string
+
+  validation {
+    condition     = can(regex("^[0-9]+$", var.github_owner_id))
+    error_message = "github_owner_id must contain only digits."
+  }
+}
+
 variable "github_repository" {
   description = "GitHub repository allowed to assume the CI/CD role."
   type        = string
@@ -35,6 +45,16 @@ variable "github_repository" {
   validation {
     condition     = length(trimspace(var.github_repository)) > 0
     error_message = "github_repository cannot be empty."
+  }
+}
+
+variable "github_repository_id" {
+  description = "Stable numeric GitHub repository ID."
+  type        = string
+
+  validation {
+    condition     = can(regex("^[0-9]+$", var.github_repository_id))
+    error_message = "github_repository_id must contain only digits."
   }
 }
 

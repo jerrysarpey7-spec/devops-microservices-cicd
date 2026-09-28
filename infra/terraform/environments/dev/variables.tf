@@ -240,12 +240,23 @@ variable "github_owner" {
   default     = "jerrysarpey7-spec"
 }
 
+variable "github_owner_id" {
+  description = "Stable numeric GitHub ID of the repository owner."
+  type        = string
+  default     = "225638558"
+}
+
 variable "github_repository" {
   description = "GitHub repository used by the CI/CD workflow."
   type        = string
   default     = "devops-microservices-cicd"
 }
 
+variable "github_repository_id" {
+  description = "Stable numeric GitHub repository ID."
+  type        = string
+  default     = "1366902343"
+}
 variable "github_deployment_branch" {
   description = "Git branch allowed to assume the AWS deployment role."
   type        = string
