@@ -144,13 +144,29 @@ jobs:
         run: |
           set -euo pipefail
 
+          namespace="${{ vars.KUBERNETES_NAMESPACE }}"
+
           aws eks update-kubeconfig \
             --region "${{ vars.AWS_REGION }}" \
             --name "${{ vars.EKS_CLUSTER_NAME }}" \
             --alias github-actions-development
 
-          kubectl cluster-info
-          kubectl get namespace "${{ vars.KUBERNETES_NAMESPACE }}"
+          authorization="$(
+            kubectl auth can-i \
+              get deployments \
+              --namespace "$namespace"
+          )"
+
+          if [ "$authorization" != "yes" ]
+          then
+            echo "GitHub Actions role cannot access deployments in ${namespace}"
+            exit 1
+          fi
+
+          kubectl get deployments \
+            --namespace "$namespace"
+
+          echo "PASS: Kubernetes namespace access verified"
 
       - name: Deploy four Helm releases
         shell: bash
